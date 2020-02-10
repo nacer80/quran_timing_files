@@ -17,15 +17,29 @@ while j<len(surahFiles):
     surahPath = surahFile
     print "vlc load"
     player = vlc.MediaPlayer(surahPath)
-    player.play()
 
     surah = AudioSegment.from_mp3(surahPath)
 
     timingFile = "./" + surahFile[:3] + ".txt"
 
+    # start playing first
+    player.play()
+
+    i = 0
+    with open(timingFile) as fp:
+        for line in fp:
+            i = i + 1
+            timing = line.rstrip()
+
+    # and then fastforward to wherever we left off
+    if i > 0:
+        print "resuming at ayah " + str(i)
+        print "attempting to play from " + str(int(timing))
+        player.set_time(int(timing))
+
     # Create/open the timing file for the surah in overwrite mode.
-    f = open(timingFile, 'w')
-    i=0
+    f = open(timingFile, 'a')
+
     #for line in lines:
     while True:
         input = raw_input('Press enter to record location of ayah ' + str(i+1))
